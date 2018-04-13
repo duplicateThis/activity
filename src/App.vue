@@ -1,7 +1,7 @@
 <template>
   <el-container id="app">
-    <el-aside width="200px">
-      <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+    <el-aside class="aside" width="12.5%">
+      <el-menu background-color="#989898" text-color="#fff" active-text-color="#ffd04b">
         <el-menu-item index="1">
           <router-link to='/create'>创建活动</router-link>
         </el-menu-item>
@@ -43,5 +43,12 @@ a {text-decoration: none; color: #fff;}
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.el-aside {
+  background-color: #989898;
+}
+.el-menu {
+  border: none;
 }
 </style>
