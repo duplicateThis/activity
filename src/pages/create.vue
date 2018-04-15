@@ -27,7 +27,7 @@
           </el-col>
         </el-form-item>
         <el-form-item label="活动分类">
-          <el-col :span="3">
+          <el-col :span="5">
             <el-select v-model="form.valueClassify" placeholder="请选择" size="small">
               <el-col :span="3">
                 <el-option
@@ -39,7 +39,20 @@
               </el-col>
             </el-select>
           </el-col>
-          <el-button class='addClass' round @click='addClass' size="small">添加</el-button>
+          <el-button class='addClass' round @click="addClassDialog = true" size="small">添加</el-button>
+          <el-dialog title="添加活动分类" :visible.sync="addClassDialog">
+            <el-form :model="formA">
+              <el-form-item label="分类名称" >
+                <el-col :span="18">
+                  <el-input v-model="formA.name" size="small"></el-input>
+                </el-col>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="addClass">保存</el-button>
+              <el-button type="primary" @click="addClassDialog = false">取消</el-button>
+            </div>
+          </el-dialog>
         </el-form-item>
         <el-form-item label="活动地址">
 
@@ -53,14 +66,12 @@
 </template>
 
 <script>
-import popUp from '@/components/popUp.vue'
-
 export default {
   name: 'create',
   data () {
     return {
+      user: 'user1',
       form: {
-        user: 'admin',
         number: '',
         name: '',
         thehost: '',
@@ -71,14 +82,40 @@ export default {
           {value: '3', label: '分类3'}
         ],
         valueClassify: ''
-      }
+      },
+      formA: {
+        name: ''
+      },
+      addClassDialog: false
     }
   },
   methods: {
+    // get activity class
+    getClass () {
+      this.$http.get('http://localhost:3000/getClass', {
+
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+    },
     // add activity class
     addClass () {
-      popUp.add()
+      this.addClassDialog = false;
+      this.$http.get('http://localhost:3000/addClass', {
+        params: {
+          user: this.user,
+          activityClassName: this.formA.name
+        }
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (response) {
+        console.log(error);
+      });
     },
+    // submit form
     onSubmit () {
       this.$http.get('http://localhost:3000/create', {
 
@@ -90,6 +127,9 @@ export default {
         console.log(error);
       });
     }
+  },
+  mounted () {
+    this.getClass();
   }
 }
 </script>

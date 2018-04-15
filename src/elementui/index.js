@@ -22,7 +22,8 @@ import {
   Row,
   Col,
   Message,
-  MessageBox
+  MessageBox,
+  Dialog
 } from 'element-ui'
 
 // use
@@ -45,6 +46,7 @@ Vue.use(Option)
 Vue.use(Button)
 Vue.use(Row)
 Vue.use(Col)
+Vue.use(Dialog)
 
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
