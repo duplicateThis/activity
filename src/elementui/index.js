@@ -23,7 +23,13 @@ import {
   Col,
   Message,
   MessageBox,
-  Dialog
+  Dialog,
+  Cascader,
+  DatePicker,
+  Tag,
+  Radio,
+  Upload,
+  Checkbox
 } from 'element-ui'
 
 // use
@@ -47,6 +53,12 @@ Vue.use(Button)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Dialog)
+Vue.use(Cascader)
+Vue.use(DatePicker)
+Vue.use(Tag)
+Vue.use(Radio)
+Vue.use(Upload)
+Vue.use(Checkbox)
 
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
