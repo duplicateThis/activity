@@ -16,33 +16,27 @@ export default new Router({
     {path: '/', redirect: '/create'},
     {
       path: '/create',
-      name: 'create',
-      component: create
+      component: r => require.ensure([], () => r(require('../pages/create.vue')), 'create')
     },
     {
       path: '/list',
-      name: 'list',
-      component: list
+      component: r => require.ensure([], () => r(require('../pages/list.vue')), 'list')
     },
     {
       path: '/active',
-      name: 'active',
-      component: active
+      component: r => require.ensure([], () => r(require('../pages/active.vue')), 'active')
     },
     {
       path: '/participate',
-      name: 'participate',
-      component: participate
+      component: r => require.ensure([], () => r(require('../pages/participate.vue')), 'participate')
     },
     {
       path: '/setting',
-      name: 'setting',
-      component: setting
+      component: r => require.ensure([], () => r(require('../pages/setting.vue')), 'setting')
     },
     {
       path: '/classify',
-      name: 'classify',
-      component: classify
+      component: r => require.ensure([], () => r(require('../pages/classify.vue')), 'classify')
     }
   ]
 })

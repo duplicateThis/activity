@@ -10,20 +10,20 @@
     </div>
     <div class="middle">
       <p class="title">活动基本信息</p>
-      <el-form ref="form" :model="form" label-width="80px" label-position="left">
-        <el-form-item label="活动编号">
+      <el-form :rules="rules" ref="form" :model="form" label-width="80px" label-position="left">
+        <el-form-item label="活动编号" prop="number">
           <el-col :span="10">
             <el-input v-model="form.number" size="small"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="活动名称">
+        <el-form-item label="活动名称" prop="name">
           <el-col :span="10">
             <el-input v-model="form.name" size="small"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="举办方">
+        <el-form-item label="举办方" prop="thost">
           <el-col :span="10">
-            <el-input v-model="form.thehost" size="small"></el-input>
+            <el-input v-model="form.thost" size="small"></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="活动分类">
@@ -55,7 +55,7 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="活动地址">
-          <el-col :span="6">
+          <el-col :span="5">
             <el-cascader
               size="small"
               expand-trigger="hover"
@@ -64,23 +64,23 @@
               @change="handleChange">
             </el-cascader>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <el-input v-model="areaDetail" size="small"></el-input>
           </el-col>
         </el-form-item>
         <el-row>
           <el-col :span="5">
-            <el-form-item label="开始日期">
+            <el-form-item label="开始日期" prop="dateStart">
             <el-date-picker type="date" placeholder="选择日期" v-model="form.dateStart" style="width: 100%;" size="small"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="5" :offset="2">
-            <el-form-item label="截止日期">
+            <el-form-item label="截止日期" prop="dateEnd">
             <el-date-picker type="date" placeholder="选择日期" v-model="form.dateEnd" style="width: 100%;" size="small"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="活动标签">
+        <el-form-item label="活动标签" prop="activityTags">
           <el-tag
           size="middle"
             :key="tag"
@@ -103,24 +103,24 @@
         </el-form-item>
         <el-form-item label="活动人数">
           <el-col :span="4">
-            <el-input v-model="form.peopleCount" size="small"></el-input>
+            <el-input v-model.number="form.peopleCount" size="small"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="活动公开">
+        <el-form-item label="活动公开" prop="activityRadio">
           <el-radio v-model="form.activityRadio" label="1">公开</el-radio>
-          <el-radio v-model="form.activityRadio" label="2">内部</el-radio>
+          <el-radio v-model="form.activityRadio" label="0">内部</el-radio>
         </el-form-item>
         <el-row>
           <el-col :span="12" class="activityImage">
-            <el-form-item label="活动图片">
+            <el-form-item label="活动图片" prop="imgUrl">
 
             </el-form-item>
           </el-col>
         </el-row>
         <br>
-        <el-form-item class="detail" label="活动详情"></el-form-item>
+        <el-form-item class="detail" label="活动详情" prop="detail"></el-form-item>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="16">
             <el-input
               type="textarea"
               :rows="8"
@@ -137,16 +137,42 @@
           </el-col>
         </el-row>
         <el-tag
-        size="middle"
-        :key="val[0]"
-        v-for="val in setTags1"
-        :disable-transitions="false">
+          size="middle"
+          :key="val[0]"
+          v-for="val in setTags1"
+          :disable-transitions="false">
+            <el-checkbox :key="val[0]" v-model='val[1]'>{{val[0]}}</el-checkbox>
+        </el-tag>
+        <el-tag
+          size="middle"
+          :key="val[0]"
+          v-for="val in setTags2"
+          closable
+          :disable-transitions="false"
+          @close="handleSetClose(val)">
           <el-checkbox :key="val[0]" v-model='val[1]'>{{val[0]}}</el-checkbox>
         </el-tag>
+        <el-input
+          size="small"
+          class="newSetInput"
+          v-if="setEditVisible"
+          v-model="setValue"
+          ref="saveSetInput"
+          @keyup.enter.native="handleSetConfirm"
+          @blur="handleSetConfirm">
+        </el-input>
+        <el-button v-else class="newSetButton" size="small" @click="showSetInput">+ 设置</el-button>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
 
         <!-- submit -->
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">立即创建</el-button>
+          <el-button round type="success" @click="issueForm('form')">发布</el-button>
+          <el-button round type="info" @click="saveForm('form')">保存</el-button>
+          <el-button round @click="resetForm(form)">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -161,10 +187,11 @@ export default {
   data () {
     return {
       user: 'user1',
+      id: 'id1',
       form: {
         number: '',
         name: '',
-        thehost: '',
+        thost: '',
         valueClassify: '',
         selectedAreaOptions: [],
         dateStart: '',
@@ -174,7 +201,8 @@ export default {
         activityRadio: '',
         imageUrl: '',
         detail: '',
-        settings: []
+        settings: [],
+        issue: 0
       },
       optionsClass: [],
       formA: {
@@ -186,12 +214,29 @@ export default {
       tagEditVisible: false,
       tagValue: '',
       setTags1: [['姓名', ''], ['公司', ''], ['手机', ''], ['邮箱', ''], ['性别', ''], ['职位', ''], ['工号', '']],
-      setTags2: []
-    }
-  },
-  computed: {
-    settingClose: function () {
-      return true
+      setTags2: [],
+      setEditVisible: false,
+      setValue: '',
+      rules: {
+        number: [
+          { required: true, message: '请输入活动编号', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' }
+        ],
+        thost: [
+          { required: true, message: '请输入举办方', trigger: 'blur' }
+        ],
+        dateStart: [
+          { required: true, message: '请选择开始日期', trigger: 'blur' }
+        ],
+        activityRadio: [
+          { required: true, message: '请选择是否公开活动', trigger: 'blur' }
+        ],
+        detail: [
+          { required: true, message: '请填写活动详情', trigger: 'blur' }
+        ]
+      }
     }
   },
   methods: {
@@ -252,24 +297,106 @@ export default {
       this.tagValue = '';
     },
     // settings
+    handleSetClose(val) {
+      this.setTags2.splice(this.setTags2.indexOf(val), 1);
+    },
+    showSetInput() {
+      this.setEditVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveSetInput.$refs.input.focus();
+      });
+    },
+    handleSetConfirm() {
+      let setValue = this.setValue;
+      if (setValue) {
+        this.setTags2.push([setValue, '']);
+      }
+      this.setEditVisible = false;
+      this.setValue = '';
+    },
 
     // submit form
-    onSubmit () {
-      this.form.selectedAreaOptions.push(this.areaDetail);
-      for(var i = 0; i < this.setTags.length; i ++) {
-        if(this.setTags[i][1] != '') {
-          this.form.settings.push(this.setTags[i][0])
+    issueForm (form) {
+      let _this = this;
+      _this.form.issue = 1;
+      _this.form.selectedAreaOptions.push(_this.areaDetail);
+      for(var i = 0; i < _this.setTags1.length; i ++) {
+        if(_this.setTags1[i][1] != '') {
+          _this.form.settings.push(_this.setTags1[i][0])
         }
       }
-      // this.$http.get('http://localhost:3000/create', {
-
-      // })
-      // .then(function (response) {
-      //   console.log(response);
-      // })
-      //   .catch(function (error) {
-      //   console.log(error);
-      // });
+      for(var i = 0; i < _this.setTags2.length; i ++) {
+        if(_this.setTags2[i][1] != '') {
+          _this.form.settings.push(_this.setTags2[i][0])
+        }
+      }
+      // valid
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          _this.$http.post('http://localhost:3000/create', {
+            form: _this.form,
+            user: _this.user,
+            id: _this.id
+          }).then(function (res) {
+            alert('发布成功！');
+            location.reload();
+          }).catch(function (err) {
+            console.log(err);
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    saveForm (form) {
+      let _this = this;
+      _this.form.selectedAreaOptions.push(_this.areaDetail);
+      for(var i = 0; i < _this.setTags1.length; i ++) {
+        if(_this.setTags1[i][1] != '') {
+          _this.form.settings.push(_this.setTags1[i][0])
+        }
+      }
+      for(var i = 0; i < _this.setTags2.length; i ++) {
+        if(_this.setTags2[i][1] != '') {
+          _this.form.settings.push(_this.setTags2[i][0])
+        }
+      }
+      // valid
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          _this.$http.post('http://localhost:3000/create', {
+            form: _this.form,
+            user: _this.user,
+            id: _this.id
+          }).then(function (res) {
+            alert('保存成功！');
+            location.reload();
+          }).catch(function (err) {
+            console.log(err);
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    resetForm (form) {
+      form.number = ''
+      form.name = '',
+      form.thost = '',
+      form.valueClassify = '',
+      form.selectedAreaOptions = [],
+      form.dateStart = '',
+      form.dateEnd = '',
+      form.activityTags = [],
+      form.peopleCount = '',
+      form.activityRadio = '',
+      form.imageUrl = '',
+      form.detail = '',
+      form.settings = [],
+      form.issue = 0,
+      this.areaDetail = ''
     }
   },
   mounted () {
@@ -328,5 +455,17 @@ a {
 }
 .detail {
   margin-bottom: 0
+}
+.newSetButton {
+  margin-left: 5px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.newSetInput {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
 }
 </style>

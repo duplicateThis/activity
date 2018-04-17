@@ -29,7 +29,9 @@ import {
   Tag,
   Radio,
   Upload,
-  Checkbox
+  Checkbox,
+  Table,
+  TableColumn
 } from 'element-ui'
 
 // use
@@ -59,6 +61,8 @@ Vue.use(Tag)
 Vue.use(Radio)
 Vue.use(Upload)
 Vue.use(Checkbox)
+Vue.use(Table)
+Vue.use(TableColumn)
 
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
