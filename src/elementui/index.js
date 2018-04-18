@@ -31,7 +31,8 @@ import {
   Upload,
   Checkbox,
   Table,
-  TableColumn
+  TableColumn,
+  Icon
 } from 'element-ui'
 
 // use
@@ -63,8 +64,10 @@ Vue.use(Upload)
 Vue.use(Checkbox)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Icon)
 
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$prompt = MessageBox.prompt;
+Vue.prototype.$message = Message;

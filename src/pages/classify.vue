@@ -61,7 +61,8 @@ export default {
         name: ''
       },
       activityClass: [],
-      count: ""
+      count: "",
+      editDialog: false
     }
   },
   methods: {
@@ -80,7 +81,7 @@ export default {
       .catch(function (response) {
         console.log(error);
       });
-      this.optionsClass = [];
+      this.activityClass = [];
       this.getClass();
     },
     getClass () {
@@ -99,18 +100,67 @@ export default {
         _this.count = response.data.length
       })
     },
-    // edit
+    // editClass
     editClass (val) {
+      let _this = this;
+      this.$prompt('请修改分类名称', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({value}) => {
+        _this.$http.get('http://localhost:3000/editClass', {
+          params: {
+            user: _this.user,
+            val1: val,
+            val2: value
+          }
+        }).then(function (res) {
+          console.log(res.data)
+          _this.activityClass = [];
+          _this.getClass();
+          _this.$message({
+            type: 'success',
+            message: '编辑成功！'
+          });
+        }).catch(function (err) {
 
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消编辑'
+        })
+      })
     },
-    // deleteC
+    // deleteClass
     deleteClass (val) {
-      this.$http.get('http://localhost:3000/getClass', {
-        params: {
-          user: this.user,
-          val: val
-        }
-      }).then(function (response) {})
+      let _this = this;
+      this.$confirm('确定删除吗？', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        _this.$http.get('http://localhost:3000/deleteClass', {
+          params: {
+            user: _this.user,
+            val: val
+          }
+        }).then(function (res) {
+          console.log(res.data)
+          _this.activityClass = [];
+          _this.getClass();
+          _this.$message({
+            type: 'success',
+            message: '删除成功！'
+          });
+        }).catch(function (err) {
+
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
+      })
     }
   },
   mounted () {
