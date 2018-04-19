@@ -2,24 +2,23 @@
   <el-container id="app">
     <el-aside class="aside" width="12.5%">
       <el-menu background-color="#989898" text-color="#fff" active-text-color="#ffd04b">
-        <el-menu-item index="1">
-          <router-link to='/create'>创建活动</router-link>
-        </el-menu-item>
-        <el-menu-item index="2">
-          <router-link to='/list'>活动列表</router-link>
-        </el-menu-item>
-        <el-menu-item index="3">
-          <router-link to='/active'>举办的活动</router-link>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <router-link to='/participate'>参与人员</router-link>
-        </el-menu-item>
-        <el-menu-item index="5">
-          <router-link to='/setting'>表单项设置</router-link>
-        </el-menu-item>
-        <el-menu-item index="6">
-          <router-link to='/classify'>活动分类</router-link>
-        </el-menu-item>
+        <router-link to='/create'>
+          <el-menu-item index="1">创建活动</el-menu-item>
+        </router-link>
+        <router-link to='/list'>
+          <el-menu-item index="2">活动列表</el-menu-item>
+        </router-link>
+          <router-link to='/active'><el-menu-item index="3">举办的活动</el-menu-item>
+        </router-link>
+        <router-link to='/participate'>
+          <el-menu-item index="4">参与人员</el-menu-item>
+        </router-link>
+        <router-link to='/setting'>
+          <el-menu-item index="5">表单项设置</el-menu-item>
+        </router-link>
+        <router-link to='/classify'>
+          <el-menu-item index="6">活动分类</el-menu-item>
+        </router-link>
       </el-menu>
     </el-aside>
     <el-main>

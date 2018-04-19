@@ -28,7 +28,7 @@
         </el-form-item>
         <el-form-item label="活动分类">
           <el-col :span="5">
-            <el-select v-model="form.valueClassify" placeholder="请选择" size="small">
+            <el-select v-model="form.classify" placeholder="请选择" size="small">
               <el-col :span="1">
                 <el-option
                   v-for="item in optionsClass"
@@ -60,7 +60,7 @@
               size="small"
               expand-trigger="hover"
               :options="areaOptions"
-              v-model="form.selectedAreaOptions"
+              v-model="form.address"
               @change="handleChange">
             </el-cascader>
           </el-col>
@@ -70,21 +70,21 @@
         </el-form-item>
         <el-row>
           <el-col :span="5">
-            <el-form-item label="开始日期" prop="dateStart">
-            <el-date-picker type="date" placeholder="选择日期" v-model="form.dateStart" style="width: 100%;" size="small"></el-date-picker>
+            <el-form-item label="开始日期" prop="ds">
+            <el-date-picker type="date" placeholder="选择日期" v-model="form.ds" style="width: 100%;" size="small"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="5" :offset="2">
-            <el-form-item label="截止日期" prop="dateEnd">
-            <el-date-picker type="date" placeholder="选择日期" v-model="form.dateEnd" style="width: 100%;" size="small"></el-date-picker>
+            <el-form-item label="截止日期" prop="de">
+            <el-date-picker type="date" placeholder="选择日期" v-model="form.de" style="width: 100%;" size="small"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="活动标签" prop="activityTags">
+        <el-form-item label="活动标签" prop="tags">
           <el-tag
           size="middle"
             :key="tag"
-            v-for="tag in form.activityTags"
+            v-for="tag in form.tags"
             closable
             :disable-transitions="false"
             @close="handleClose(tag)">
@@ -103,12 +103,12 @@
         </el-form-item>
         <el-form-item label="活动人数">
           <el-col :span="4">
-            <el-input v-model.number="form.peopleCount" size="small"></el-input>
+            <el-input v-model.number="form.count" size="small"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="活动公开" prop="activityRadio">
-          <el-radio v-model="form.activityRadio" label="1">公开</el-radio>
-          <el-radio v-model="form.activityRadio" label="0">内部</el-radio>
+        <el-form-item label="活动公开" prop="public">
+          <el-radio v-model="form.public" label="1">公开</el-radio>
+          <el-radio v-model="form.public" label="0">内部</el-radio>
         </el-form-item>
         <el-row>
           <el-col :span="12" class="activityImage">
@@ -192,13 +192,13 @@ export default {
         number: '',
         name: '',
         thost: '',
-        valueClassify: '',
-        selectedAreaOptions: [],
-        dateStart: '',
-        dateEnd: '',
-        activityTags: [],
-        peopleCount: '',
-        activityRadio: '',
+        classify: '',
+        address: [],
+        ds: '',
+        de: '',
+        tags: [],
+        count: '',
+        public: '',
         imageUrl: '',
         detail: '',
         settings: [],
@@ -227,10 +227,10 @@ export default {
         thost: [
           { required: true, message: '请输入举办方', trigger: 'blur' }
         ],
-        dateStart: [
+        ds: [
           { required: true, message: '请选择开始日期', trigger: 'blur' }
         ],
-        activityRadio: [
+        public: [
           { required: true, message: '请选择是否公开活动', trigger: 'blur' }
         ],
         detail: [
@@ -278,9 +278,9 @@ export default {
     },
     // area
     handleChange (value) {},
-    // activityTags
+    // tags
     handleClose(tag) {
-      this.form.activityTags.splice(this.form.activityTags.indexOf(tag), 1);
+      this.form.tags.splice(this.form.tags.indexOf(tag), 1);
     },
     showTagInput() {
       this.tagEditVisible = true;
@@ -291,7 +291,7 @@ export default {
     handleInputConfirm() {
       let tagValue = this.tagValue;
       if (tagValue) {
-        this.form.activityTags.push(tagValue);
+        this.form.tags.push(tagValue);
       }
       this.tagEditVisible = false;
       this.tagValue = '';
@@ -319,7 +319,7 @@ export default {
     issueForm (form) {
       let _this = this;
       _this.form.issue = 1;
-      _this.form.selectedAreaOptions.push(_this.areaDetail);
+      _this.form.address.push(_this.areaDetail);
       for(var i = 0; i < _this.setTags1.length; i ++) {
         if(_this.setTags1[i][1] != '') {
           _this.form.settings.push(_this.setTags1[i][0])
@@ -351,7 +351,21 @@ export default {
     },
     saveForm (form) {
       let _this = this;
-      _this.form.selectedAreaOptions.push(_this.areaDetail);
+      if (_this.form._id) {
+        if (_this.form.issue == 0) {
+          // haven't issue activity edit
+          console.log('可编辑保存');
+          console.log(_this.form)
+        } else {
+          // issued activity edit
+          console.log('将发布活动改为未发布？')
+          console.log(_this.form)
+        }
+      } else {
+        console.log('新创建')
+      }
+
+      _this.form.address.push(_this.areaDetail);
       for(var i = 0; i < _this.setTags1.length; i ++) {
         if(_this.setTags1[i][1] != '') {
           _this.form.settings.push(_this.setTags1[i][0])
@@ -385,23 +399,39 @@ export default {
       form.number = ''
       form.name = '',
       form.thost = '',
-      form.valueClassify = '',
-      form.selectedAreaOptions = [],
-      form.dateStart = '',
-      form.dateEnd = '',
-      form.activityTags = [],
-      form.peopleCount = '',
-      form.activityRadio = '',
+      form.classify = '',
+      form.address = [],
+      form.ds = '',
+      form.de = '',
+      form.tags = [],
+      form.count = '',
+      form.public = '',
       form.imageUrl = '',
       form.detail = '',
       form.settings = [],
       form.issue = 0,
       this.areaDetail = ''
+    },
+
+    //get router params
+    getParams () {
+      let routerForm = this.$route.params.activity;
+      if(routerForm){
+        this.areaDetail = routerForm.address[3];
+        this.form = routerForm;
+        if (routerForm.public === true) {
+          this.form.public = '1'
+        } else {
+          this.form.public = '0'
+        }
+      }
+      console.log(routerForm)
     }
   },
   mounted () {
     // get activity class when mounted
     this.getClass();
+    this.getParams();
   }
 }
 </script>
