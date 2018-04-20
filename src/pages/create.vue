@@ -11,11 +11,6 @@
     <div class="middle">
       <p class="title">活动基本信息</p>
       <el-form :rules="rules" ref="form" :model="form" label-width="80px" label-position="left">
-        <el-form-item label="活动编号" prop="number">
-          <el-col :span="10">
-            <el-input v-model="form.number" size="small"></el-input>
-          </el-col>
-        </el-form-item>
         <el-form-item label="活动名称" prop="name">
           <el-col :span="10">
             <el-input v-model="form.name" size="small"></el-input>
@@ -189,7 +184,6 @@ export default {
       user: 'user1',
       id: 'id1',
       form: {
-        number: '',
         name: '',
         thost: '',
         classify: '',
@@ -218,9 +212,6 @@ export default {
       setEditVisible: false,
       setValue: '',
       rules: {
-        number: [
-          { required: true, message: '请输入活动编号', trigger: 'blur' }
-        ],
         name: [
           { required: true, message: '请输入活动名称', trigger: 'blur' }
         ],
@@ -243,20 +234,35 @@ export default {
     // get activity class
     getClass () {
       let _this = this;
-      this.$http.get('http://localhost:3000/getClass', {
+      this.$http.post('http://localhost:3000/getClass', {
         params: {
-          user: this.user
+          user: this.user,
+          id: this.id
         }
-      })
-      .then(function (response) {
-        for(var i = 0; i < response.data.length; i ++) {
+      }).then(function (res) {
+        for(var i = 0; i < res.data.length; i ++) {
           _this.optionsClass.push({
-            'value': response.data[i].activityClassName,
-            'label': response.data[i].activityClassName
+            'value': res.data[i].name,
+            'label': res.data[i].name
           })
         }
+      }).catch(function(err){
+        _this.$message('获取表单分类失败！')
       })
     },
+    // getClass () {
+    //   let _this = this;
+    //   this.$http.post('http://localhost:3000/getClass', {
+    //     params: {
+    //       user: this.user,
+    //       id: this.id
+    //     }
+    //   }).then(function(res){
+    //      _this.$message('获取表单分类成功！')
+    //   }).catch(function(err){
+    //     _this.$message('获取表单分类失败！')
+    //   })
+    // },
     // add activity class
     addClass () {
       let _this = this;
@@ -431,7 +437,7 @@ export default {
   mounted () {
     // get activity class when mounted
     this.getClass();
-    this.getParams();
+    // this.getParams();
   }
 }
 </script>
