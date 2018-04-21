@@ -30,6 +30,7 @@ import {
   Radio,
   Upload,
   Checkbox,
+  CheckboxGroup,
   Table,
   TableColumn,
   Icon
@@ -62,6 +63,7 @@ Vue.use(Tag)
 Vue.use(Radio)
 Vue.use(Upload)
 Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
 Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Icon)

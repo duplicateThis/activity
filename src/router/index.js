@@ -12,6 +12,7 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history',
+  linkActiveClass:'aaa',
   routes: [
     {path: '/', redirect: '/create'},
     {

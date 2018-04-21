@@ -21,9 +21,9 @@
         <el-select v-model="classify" placeholder="请选择分类" size="small" @change="classifyChange">
           <el-col :span="1">
             <el-option
-              v-for="item in optionsClass"
-              :key="item.value" :label="item.label"
-              :value="item.value"
+              v-for="item in optionClass"
+              :key="optionClass.indexOf(item)" :label="item.name"
+              :value="item.name"
               size="small">
             </el-option>
           </el-col>
@@ -41,8 +41,7 @@
     <br>
     <br>
     <el-row class="tHeader">
-      <el-col :span="1">编号</el-col>
-      <el-col :span="3">活动图片</el-col>
+      <el-col :span="4">活动图片</el-col>
       <el-col :span="3">活动名称</el-col>
       <el-col :span="2">发布方</el-col>
       <el-col :span="2">分类</el-col>
@@ -52,8 +51,7 @@
       <el-col :span="3">操作</el-col>
     </el-row>
     <el-row v-for="a in list" :key="a.value" class="tBody">
-      <el-col :span="1">{{a.number}}</el-col>
-      <el-col :span="3">{{a.imgUrl ? a.imgUrl : '暂无图片'}}</el-col>
+      <el-col :span="4">{{a.imgUrl ? a.imgUrl : '暂无图片'}}</el-col>
       <el-col :span="3">{{a.name}}</el-col>
       <el-col :span="2">{{a.thost}}</el-col>
       <el-col :span="2">{{a.classify ? a.classify : '暂无'}}</el-col>
@@ -79,34 +77,31 @@ export default {
       issue: true,
       classify: '',
       searchW: '',
-      optionsClass: [],
+      optionClass: [],
       list: [],
       issuedClass: 'active',
       noIssueClass: ''
     }
   },
   methods: {
-    // get activity class
+  // get
     getClass () {
       let _this = this;
-      this.$http.get('http://localhost:3000/getClass', {
+      this.$http.post('http://localhost:3000/getClass', {
         params: {
-          user: this.user
+          user: this.user,
+          id: this.id
         }
-      })
-      .then(function (response) {
-        for(var i = 0; i < response.data.length; i ++) {
-          _this.optionsClass.push({
-            'value': response.data[i].activityClassName,
-            'label': response.data[i].activityClassName
-          })
-        }
+      }).then(function (res) {
+        _this.optionClass = res.data;
+        _this.optionClass.push('')
+      }).catch(function(err){
+        _this.$message('获取表单分类失败！')
       })
     },
-    // get activity list
     getList () {
       let _this = this;
-      this.$http.get('http://localhost:3000/getList', {
+      this.$http.post('http://localhost:3000/getList', {
         params: {
           user: this.user,
           id: this.id,
@@ -118,8 +113,9 @@ export default {
         _this.list = res.data
       })
     },
+  // get
 
-    // search by issue
+  // search
     issued () {
       this.issuedClass = "active";
       this.noIssueClass = "";
@@ -132,26 +128,27 @@ export default {
       this.issue = false;
       this.getList()
     },
-    // search include classify
     classifyChange () {
       this.getList()
     },
-    //  search inclue input
     blurSearch () {
       this.getList()
     },
+  // search
 
-    // delete activity
-    delActivity (id) {
+  // delete && edit
+    delActivity (_id) {
       let _this = this;
       this.$confirm('确定删除吗？', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        _this.$http.get('http://localhost:3000/delActivity', {
+        _this.$http.post('http://localhost:3000/delActivity', {
           params: {
-            id: id
+            _id: _id,
+            user: _this.user,
+            id: _this.id
           }
         }).then(function (res) {
           _this.$message({
@@ -160,7 +157,7 @@ export default {
           });
           _this.getList()
         }).catch(function (err) {
-
+          _this.$message('删除失败！')
         })
       }).catch(() => {
         this.$message({
@@ -169,7 +166,6 @@ export default {
         })
       })
     },
-    // edit activity
     editActivity (a) {
       this.$router.push({
         path: '/create',
@@ -180,6 +176,7 @@ export default {
         }
       })
     }
+  // delete && edit
   },
   mounted () {
     this.getClass();

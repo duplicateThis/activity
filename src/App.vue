@@ -8,7 +8,8 @@
         <router-link to='/list'>
           <el-menu-item index="2">活动列表</el-menu-item>
         </router-link>
-          <router-link to='/active'><el-menu-item index="3">举办的活动</el-menu-item>
+        <router-link to='/active'>
+          <el-menu-item index="3">举办的活动</el-menu-item>
         </router-link>
         <router-link to='/participate'>
           <el-menu-item index="4">参与人员</el-menu-item>
@@ -49,5 +50,11 @@ a {text-decoration: none; color: #fff;}
 }
 .el-menu {
   border: none;
+}
+a {
+  display: block;
+}
+.aaa {
+  background-color: red
 }
 </style>
