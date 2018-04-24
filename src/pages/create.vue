@@ -59,7 +59,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="5" :offset="1">
-            <el-form-item label="截止日期" prop="de">
+            <el-form-item label="结束日期" prop="de">
               <el-date-picker type="date" placeholder="选择日期" v-model="form.de" style="width: 100%;" size="small"></el-date-picker>
             </el-form-item>
           </el-col>
@@ -165,7 +165,7 @@ export default {
         tags: [],
         count: '',
         public: '',
-        imageUrl: '',
+        imageUrl: [],
         detail: '',
         settings: [],
         issue: 0
@@ -191,6 +191,9 @@ export default {
         ],
         ds: [
           { required: true, message: '请选择开始日期', trigger: 'blur' }
+        ],
+        de: [
+          { required: true, message: '请选择结束日期', trigger: 'blur' }
         ],
         public: [
           { required: true, message: '请选择是否公开活动', trigger: 'blur' }
@@ -349,25 +352,46 @@ export default {
   // submit form
     issueForm (form) {
       let _this = this;
+      let time = new Date();
       _this.form.issue = 1;
-      _this.form.address.push(_this.areaDetail);
       _this.form.settings = _this.checkList;
       // valid
       this.$refs[form].validate((valid) => {
         if (valid) {
-          _this.$http.post('http://localhost:3000/create', {
-            form: _this.form,
-            user: _this.user,
-            id: _this.id
-          }).then(function (res) {
-            _this.$message({
-              type: 'success',
-              message: '发布成功！'
-            })
-            location.reload();
-          }).catch(function (err) {
-            _this.$message('发布失败！')
-          });
+          if (_this.routerParams) {
+            _this.routerParams.address[3] = _this.areaDetail;
+            _this.$http.post('http://localhost:3000/editActivity', {
+              form: _this.form,
+              user: _this.user,
+              id: _this.id,
+              _id: _this.routerParams._id,
+              time: time
+            }).then(function (res) {
+              _this.$message({
+                type: 'success',
+                message: '发布成功！'
+              })
+              location.reload()
+            }).catch(function (err) {
+              _this.$message('发布失败！')
+            });
+          } else {
+            _this.form.address.push(_this.areaDetail);
+            _this.$http.post('http://localhost:3000/create', {
+              form: _this.form,
+              user: _this.user,
+              id: _this.id,
+              time: time
+            }).then(function (res) {
+              _this.$message({
+                type: 'success',
+                message: '发布成功！'
+              })
+              location.reload()
+            }).catch(function (err) {
+              _this.$message('发布失败！')
+            });
+          }
         } else {
           console.log('error submit!!');
           return false;
@@ -376,24 +400,42 @@ export default {
     },
     saveForm (form) {
       let _this = this;
-      _this.form.address.push(_this.areaDetail);
       _this.form.settings = _this.checkList;
       // valid
       this.$refs[form].validate((valid) => {
         if (valid) {
-          _this.$http.post('http://localhost:3000/create', {
-            form: _this.form,
-            user: _this.user,
-            id: _this.id
-          }).then(function (res) {
-            _this.$message({
-              type: 'success',
-              message: '保存成功！'
-            })
-            location.reload();
-          }).catch(function (err) {
-            _this.$message('发布失败！')
-          });
+          if (_this.routerParams) {
+            _this.routerParams.address[3] = _this.areaDetail;
+            _this.$http.post('http://localhost:3000/editActivity', {
+              form: _this.form,
+              user: _this.user,
+              id: _this.id,
+              _id: _this.routerParams._id
+            }).then(function (res) {
+              _this.$message({
+                type: 'success',
+                message: '保存成功！'
+              })
+              location.reload()
+            }).catch(function (err) {
+              _this.$message('保存失败！')
+            });
+          } else {
+            _this.form.address.push(_this.areaDetail);
+            _this.$http.post('http://localhost:3000/create', {
+              form: _this.form,
+              user: _this.user,
+              id: _this.id
+            }).then(function (res) {
+              _this.$message({
+                type: 'success',
+                message: '保存成功！'
+              })
+              location.reload();
+            }).catch(function (err) {
+              _this.$message('发布失败！')
+            });
+          }
         } else {
           console.log('error submit!!');
           return false;
@@ -432,20 +474,20 @@ export default {
       this.routerParams = this.$route.params.activity;
       if(routerForm){
         this.areaDetail = routerForm.address[3];
-        if (routerForm.public === true) {
+        this.checkList = routerForm.settings;
+        this.form = routerForm;
+        if (routerForm.public == true) {
           this.form.public = '1'
         } else {
           this.form.public = '0'
         }
-        this.checkList = routerForm.settings;
-        this.form = routerForm;
       }
     }
   },
   mounted () {
     this.getClass();
     this.getSettings();
-    this.getParams()
+    this.getParams();
   }
 }
 </script>

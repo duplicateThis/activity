@@ -41,25 +41,27 @@
     <br>
     <br>
     <el-row class="tHeader">
-      <el-col :span="4">活动图片</el-col>
+      <el-col :span="3">活动图片</el-col>
       <el-col :span="3">活动名称</el-col>
       <el-col :span="2">发布方</el-col>
       <el-col :span="2">分类</el-col>
       <el-col :span="2">活动人数</el-col>
-      <el-col :span="4">地址</el-col>
+      <el-col :span="3">地址</el-col>
       <el-col :span="4">时间</el-col>
+      <el-col :span="2">状态</el-col>
       <el-col :span="3">操作</el-col>
     </el-row>
     <el-row v-for="a in list" :key="a.value" class="tBody">
-      <el-col :span="4">{{a.imgUrl ? a.imgUrl : '暂无图片'}}</el-col>
+      <el-col :span="3">{{a.imgUrl == [] ? a.imgUrl : '暂无图片'}}</el-col>
       <el-col :span="3">{{a.name}}</el-col>
       <el-col :span="2">{{a.thost}}</el-col>
       <el-col :span="2">{{a.classify ? a.classify : '暂无'}}</el-col>
       <el-col :span="2">{{a.count ? a.count : '暂无'}}</el-col>
-      <el-col :span="4">{{a.address ? a.address : '暂无' | addressFilter}}</el-col>
+      <el-col :span="3">{{a.address ? a.address : '暂无' | addressFilter}}</el-col>
       <el-col :span="4">{{a.ds|timeFilter}} 至 {{a.de|timeFilter}}</el-col>
+      <el-col :span="2">{{a.issue ? (a.holding ? (a.held ? '已结束' : '举行中') : '报名中') : '未发布'}}</el-col>
       <el-col :span="3">
-        <el-button size="mini" type="info" @click="editActivity(a)">编辑</el-button>
+        <el-button v-show="!a.holding & !a.held" size="mini" type="info" @click="editActivity(a)">编辑</el-button>
         <el-button size="mini" type="danger" @click="delActivity(a._id)">删除</el-button>
       </el-col>
     </el-row>
@@ -111,6 +113,8 @@ export default {
         }
       }).then(function(res){
         _this.list = res.data
+      }).catch(function(err){
+        _this.$message('获取列表失败！')
       })
     },
   // get
